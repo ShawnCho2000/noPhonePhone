@@ -46,11 +46,16 @@ def loop_func(event):
       if fingersUp == [0, 0, 0, 0, 0]:
         # move around
         if htm.fistClosed(handLMS):
-          msh.rotate_z(0.5)
+          print(msh.pos())
+          print([handLMS.landmark[8].x, handLMS.landmark[8].y, handLMS.landmark[8].z])
+          cur = msh.pos()
+          cur[0] = (handLMS.landmark[8].x)
+          cur[1] = (handLMS.landmark[8].y) 
+          #cur[2] = 10*(handLMS.landmark[8].z * -1)
+          msh.pos(cur[0], cur[1]) 
         else:
           msh.rotate_z(-0.5)
-
-
+        
           #todo move around model for WAN
       elif fingersUp == [1, 1, 0, 0, 0]:
         #zoom in zoom out mode
