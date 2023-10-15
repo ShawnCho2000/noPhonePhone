@@ -13,28 +13,28 @@ def fingersUp(hand):
   fingers = []
   # Thumb 
   if(coords[4].x < coords[2].x):
-    fingers.append(1)
-  else:
     fingers.append(0)
+  else:
+    fingers.append(1)
   #pointer
   if(coords[8].y > coords[6].y):
-    fingers.append(1)
-  else:
     fingers.append(0)
+  else:
+    fingers.append(1)
   #middle
   if(coords[12].y > coords[10].y):
-    fingers.append(1)
-  else:
     fingers.append(0)
+  else:
+    fingers.append(1)
   #ring
   if(coords[16].y > coords[14].y):
-    fingers.append(1)
-  else:
     fingers.append(0)
+  else:
+    fingers.append(1)
   #pinky
   if(coords[20].y > coords[18].y):
-    fingers.append(1)
-  else:
     fingers.append(0)
+  else:
+    fingers.append(1)
 
   return fingers
