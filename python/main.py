@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import HandTrackingModule as htm
+import serial
 # model stuff
 from vedo import *
 from time import time
@@ -10,30 +11,29 @@ wCam, hCam = 640, 480
 # ---------------------------------------------- #
 startingHandPos = [[None, None, None],[None, None, None]]
 startingModelPos = [[None, None, None],[None, None, None]]
+prevAngle = None
 
+arduino = serial.Serial(port='/dev/cu.usbmodem142401', baudrate=9600, timeout=0.1)
+
+it = 0
 # function that loops over and over, like a while true loop
 def loop_func(event):
-  # print(event)
-  # global prev
-  # if event.keyPressed != prev and event.keyPressed != None:
 
-  #   prev = event.keyPressed
-  #   print(prev)
-  #   if event.keyPressed == "Up":
-  #     # cur = msh.pos()
-  #     # msh.pos(cur[0], cur[1] + 0.1, cur[2])
-  #     cur = msh.scale()
-  #     msh.scale(cur*1.02)
-  #   if event.keyPressed == "Down":
-  #     cur = msh.pos()
-  #     msh.pos(cur[0], cur[1] - 0.1, cur[2])
-  #   if event.keyPressed == "Right":
-  #     msh.rotate_z(0.1)
-  #   if event.keyPressed == "Left":
-  #     msh.rotate_z(-0.1)
-  #   plt.render()
-
-
+  try:
+    sensorVal = arduino.read(arduino.in_waiting).decode()
+    #idk why i have to do this, but it works
+    num = int(sensorVal.partition('\n')[2].partition('\n')[0])
+    global prevAngle
+    if prevAngle == None:
+      prevAngle = num
+    elif prevAngle != num:
+      if abs(prevAngle - num) < 150 and abs(prevAngle - num) > 1 and num > 0 and num < 649:
+        plt.azimuth((prevAngle - num)/2)
+        prevAngle = num
+    else:
+      plt.azimuth(0)
+  except:
+    pass
 
   # opencv hand tracking setup
   success, img = cap.read()
@@ -58,8 +58,6 @@ def loop_func(event):
         else:
           meshPosition = startingModelPos[isRightHand]
           movePos = [handLMS.landmark[0].x - startingHandPos[isRightHand][0], handLMS.landmark[0].y - startingHandPos[isRightHand][1], handLMS.landmark[0].z - startingHandPos[isRightHand][2]]
-          print("moved:  ")
-          print(movePos)
           msh.pos(meshPosition[0] - movePos[0]*5, meshPosition[1] - movePos[1]*5, meshPosition[2])
         # # move around
 
@@ -82,7 +80,7 @@ def loop_func(event):
         sensDown, sensUp = 0.06, 0.06
         scaledDist = max(1 - sensDown, min(dist, 1 + sensUp))
         msh.scale(scaledDist)
-      plt.render()
+  plt.render()
 
 
   cv2.imshow("Image", img)
