@@ -76,8 +76,15 @@ msh = Mesh("Ironman2.obj")
 msh.texture("25.5_defaultMat_BaseColor.png", scale=0.1)
 txt = Text2D(bg='yellow')
 
+gauntlet = Mesh("gauntlet.obj")
+# gauntlet.scale(0.3)
+gauntlet.texture("gauntlet.png", scale=0.1)
+gauntlet.rotate_z(170)
+gauntlet.pos(-1, -1, 1)
+
 plt = Plotter(axes=1)
 plt += [msh, txt]
+plt += [gauntlet]
 
 plt.add_callback("timer", loop_func)
 plt.timer_callback("start")
