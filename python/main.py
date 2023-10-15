@@ -39,10 +39,15 @@ def loop_func(event):
   results = hands.process(imgRGB)
   if results.multi_hand_landmarks:
     for handLMS in results.multi_hand_landmarks:
+      isRightHand = htm.isRightHand(handLMS)
+      msh = gauntlet
+      if isRightHand:
+        msh = ironman
       #display hands
       mpDraw.draw_landmarks(img, handLMS, mpHands.HAND_CONNECTIONS)
 
       fingersUp = htm.fingersUp(handLMS)
+      print(fingersUp)
       if fingersUp == [0, 0, 0, 0, 0]:
         # move around
         if htm.fistClosed(handLMS):
@@ -50,19 +55,19 @@ def loop_func(event):
           print([handLMS.landmark[8].x, handLMS.landmark[8].y, handLMS.landmark[8].z])
           cur = msh.pos()
           cur[0] = (handLMS.landmark[8].x)
-          cur[1] = (handLMS.landmark[8].y) 
+          cur[1] = (handLMS.landmark[8].y)
           #cur[2] = 10*(handLMS.landmark[8].z * -1)
-          msh.pos(cur[0], cur[1]) 
+          msh.pos(cur[0], cur[1])
         else:
           msh.rotate_z(-0.5)
-        
+
           #todo move around model for WAN
       elif fingersUp == [1, 1, 0, 0, 0]:
         #zoom in zoom out mode
         dist = htm.getThumbIndexDistance(handLMS)
         sensDown, sensUp = 0.06, 0.06
         scaledDist = max(1 - sensDown, min(dist, 1 + sensUp))
-        plt.zoom(scaledDist)
+        msh.scale(scaledDist)
       plt.render()
 
 
@@ -77,18 +82,18 @@ mpDraw = mp.solutions.drawing_utils
 
 
 # 3d model display setup
-msh = Mesh("Ironman2.obj")
-msh.texture("25.5_defaultMat_BaseColor.png", scale=0.1)
+ironman = Mesh("Ironman2.obj")
+ironman.texture("25.5_defaultMat_BaseColor.png", scale=0.1)
 txt = Text2D(bg='yellow')
 
 gauntlet = Mesh("gauntlet.obj")
 # gauntlet.scale(0.3)
 gauntlet.texture("gauntlet.png", scale=0.1)
-gauntlet.rotate_z(170)
+# gauntlet.rotate_z(170)
 gauntlet.pos(-1, -1, 1)
 
 plt = Plotter(axes=1)
-plt += [msh, txt]
+plt += [ironman, txt]
 plt += [gauntlet]
 
 plt.add_callback("timer", loop_func)

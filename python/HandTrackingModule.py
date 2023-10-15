@@ -20,11 +20,19 @@ def getThumbIndexDistance(hand):
 def fingersUp(hand):
   coords = hand.landmark
   fingers = []
+  isRight = isRightHand(hand)
+
   # Thumb
   if(coords[4].x < coords[2].x):
-    fingers.append(0)
+    if isRight:
+      fingers.append(0)
+    else:
+      fingers.append(1)
   else:
-    fingers.append(1)
+    if isRight:
+      fingers.append(1)
+    else:
+      fingers.append(0)
   #pointer
   if(coords[8].y > coords[6].y):
     fingers.append(0)
