@@ -41,24 +41,23 @@ def loop_func(event):
     for handLMS in results.multi_hand_landmarks:
       #display hands
       mpDraw.draw_landmarks(img, handLMS, mpHands.HAND_CONNECTIONS)
-      #get fist close
-      # print(htm.fistClosed(handLMS))
-      # if htm.fistClosed(handLMS):
-      #   msh.rotate_z(0.5)
-      #   plt.render()
-      # else:
-      #   msh.rotate_z(-0.5)
+
+      fingersUp = htm.fingersUp(handLMS)
+      if fingersUp == [0, 0, 0, 0, 0]:
+        # move around
+        if htm.fistClosed(handLMS):
+          msh.rotate_z(0.5)
+        else:
+          msh.rotate_z(-0.5)
 
 
-      #handle zoomz
-      dist = htm.getThumbIndexDistance(handLMS)
-
-      sensDown, sensUp = 0.06, 0.06
-      scaledDist = max(1 - sensDown, min(dist, 1 + sensUp))
-      print(scaledDist)
-      plt.zoom(scaledDist)
-
-
+          #todo move around model for WAN
+      elif fingersUp == [1, 1, 0, 0, 0]:
+        #zoom in zoom out mode
+        dist = htm.getThumbIndexDistance(handLMS)
+        sensDown, sensUp = 0.06, 0.06
+        scaledDist = max(1 - sensDown, min(dist, 1 + sensUp))
+        plt.zoom(scaledDist)
       plt.render()
 
 
