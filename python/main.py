@@ -1,12 +1,13 @@
 import cv2
 import mediapipe as mp
 import HandTrackingModule as htm
-
-# ---------------------------------------------- #
 # model stuff
 from vedo import *
 from time import time
 
+# ---------------------------------------------- #
+wCam, hCam = 640, 480
+# ---------------------------------------------- #
 
 # function that loops over and over, like a while true loop
 def loop_func(event):
@@ -41,17 +42,31 @@ def loop_func(event):
       #display hands
       mpDraw.draw_landmarks(img, handLMS, mpHands.HAND_CONNECTIONS)
       #get fist close
-      print(htm.fistClosed(handLMS))
-      if htm.fistClosed(handLMS):
-        msh.rotate_z(0.5)
-        plt.render()
-      else:
-        msh.rotate_z(-0.5)
-        plt.render()
+      # print(htm.fistClosed(handLMS))
+      # if htm.fistClosed(handLMS):
+      #   msh.rotate_z(0.5)
+      #   plt.render()
+      # else:
+      #   msh.rotate_z(-0.5)
+
+
+      #handle zoomz
+      dist = htm.getThumbIndexDistance(handLMS)
+
+      sensDown, sensUp = 0.06, 0.06
+      scaledDist = max(1 - sensDown, min(dist, 1 + sensUp))
+      print(scaledDist)
+      plt.zoom(scaledDist)
+
+
+      plt.render()
+
 
   cv2.imshow("Image", img)
   cv2.waitKey(1)
 cap = cv2.VideoCapture(0)
+cap.set(3, wCam)
+cap.set(4, hCam)
 mpHands = mp.solutions.hands
 hands = mpHands.Hands()
 mpDraw = mp.solutions.drawing_utils
