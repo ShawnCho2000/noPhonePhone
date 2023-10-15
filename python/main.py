@@ -8,6 +8,7 @@ from time import time
 # ---------------------------------------------- #
 wCam, hCam = 640, 480
 # ---------------------------------------------- #
+curPos = [None, None, None]
 
 # function that loops over and over, like a while true loop
 def loop_func(event):
@@ -47,22 +48,32 @@ def loop_func(event):
       mpDraw.draw_landmarks(img, handLMS, mpHands.HAND_CONNECTIONS)
 
       fingersUp = htm.fingersUp(handLMS)
-      print(fingersUp)
+      global curPos
+      print(curPos)
       if fingersUp == [0, 0, 0, 0, 0]:
-        # move around
-        if htm.fistClosed(handLMS):
-          print(msh.pos())
-          print([handLMS.landmark[8].x, handLMS.landmark[8].y, handLMS.landmark[8].z])
-          cur = msh.pos()
-          cur[0] = (handLMS.landmark[8].x)
-          cur[1] = (handLMS.landmark[8].y)
-          #cur[2] = 10*(handLMS.landmark[8].z * -1)
-          msh.pos(cur[0], cur[1])
+        if curPos == [None, None, None]:
+          curPos = [handLMS.landmark[0].x, handLMS.landmark[0].y, handLMS.landmark[0].z]
         else:
-          msh.rotate_z(-0.5)
+          meshPosition = msh.pos()
+          movePos = [handLMS.landmark[0].x - curPos[0], handLMS.landmark[0].y - curPos[1], handLMS.landmark[0].z - curPos[2]]
+          print("moved:  ")
+          print(movePos)
+          msh.pos(meshPosition[0] - movePos[0], meshPosition[1] - movePos[1], meshPosition[2])
+        # # move around
 
-          #todo move around model for WAN
-      elif fingersUp == [1, 1, 0, 0, 0]:
+        #   print(msh.pos())
+        #   print([handLMS.landmark[8].x, handLMS.landmark[8].y, handLMS.landmark[8].z])
+        #   cur = msh.pos()
+        #   cur[0] = (handLMS.landmark[8].x)
+        #   cur[1] = (handLMS.landmark[8].y)
+        #   #cur[2] = 10*(handLMS.landmark[8].z * -1)
+        #   msh.pos(cur[0], cur[1])
+      else:
+        curPos = [None, None, None]
+        #todo move around model for WAN
+
+
+      if fingersUp == [1, 1, 0, 0, 0]:
         #zoom in zoom out mode
         dist = htm.getThumbIndexDistance(handLMS)
         sensDown, sensUp = 0.06, 0.06
