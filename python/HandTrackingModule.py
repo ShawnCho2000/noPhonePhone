@@ -47,3 +47,8 @@ def fingersUp(hand):
     fingers.append(1)
 
   return fingers
+
+
+def isRightHand(hand):
+  coords = hand.landmark
+  return (coords[5].x - coords[17].x) > 0
