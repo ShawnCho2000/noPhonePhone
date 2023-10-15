@@ -10,11 +10,40 @@ def fistClosed(hand):
   # print(coords[8].y - coords[6].y)
   return diff > 0
 
-
-
 def getThumbIndexDistance(hand):
   coords = hand.landmark
   # print([coords[4].x, coords[4].y],[coords[8].x, coords[8].y])
   scale =math.dist([coords[4].x, coords[4].y],[coords[2].x, coords[2].y])
   dist = math.dist([coords[4].x, coords[4].y],[coords[8].x, coords[8].y])
   return dist/scale
+
+def fingersUp(hand):
+  coords = hand.landmark
+  fingers = []
+  # Thumb
+  if(coords[4].x < coords[2].x):
+    fingers.append(1)
+  else:
+    fingers.append(0)
+  #pointer
+  if(coords[8].y > coords[6].y):
+    fingers.append(1)
+  else:
+    fingers.append(0)
+  #middle
+  if(coords[12].y > coords[10].y):
+    fingers.append(1)
+  else:
+    fingers.append(0)
+  #ring
+  if(coords[16].y > coords[14].y):
+    fingers.append(1)
+  else:
+    fingers.append(0)
+  #pinky
+  if(coords[20].y > coords[18].y):
+    fingers.append(1)
+  else:
+    fingers.append(0)
+
+  return fingers
