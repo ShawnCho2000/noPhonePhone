@@ -8,7 +8,8 @@ from time import time
 # ---------------------------------------------- #
 wCam, hCam = 640, 480
 # ---------------------------------------------- #
-curPos = [None, None, None]
+startingHandPos = [[None, None, None],[None, None, None]]
+startingModelPos = [[None, None, None],[None, None, None]]
 
 # function that loops over and over, like a while true loop
 def loop_func(event):
@@ -48,17 +49,18 @@ def loop_func(event):
       mpDraw.draw_landmarks(img, handLMS, mpHands.HAND_CONNECTIONS)
 
       fingersUp = htm.fingersUp(handLMS)
-      global curPos
-      print(curPos)
+      global startingHandPos
+      global startingModelPos
       if fingersUp == [0, 0, 0, 0, 0]:
-        if curPos == [None, None, None]:
-          curPos = [handLMS.landmark[0].x, handLMS.landmark[0].y, handLMS.landmark[0].z]
+        if startingHandPos[isRightHand] == [None, None, None]:
+          startingHandPos[isRightHand] = [handLMS.landmark[0].x, handLMS.landmark[0].y, handLMS.landmark[0].z]
+          startingModelPos[isRightHand] = msh.pos()
         else:
-          meshPosition = msh.pos()
-          movePos = [handLMS.landmark[0].x - curPos[0], handLMS.landmark[0].y - curPos[1], handLMS.landmark[0].z - curPos[2]]
+          meshPosition = startingModelPos[isRightHand]
+          movePos = [handLMS.landmark[0].x - startingHandPos[isRightHand][0], handLMS.landmark[0].y - startingHandPos[isRightHand][1], handLMS.landmark[0].z - startingHandPos[isRightHand][2]]
           print("moved:  ")
           print(movePos)
-          msh.pos(meshPosition[0] - movePos[0], meshPosition[1] - movePos[1], meshPosition[2])
+          msh.pos(meshPosition[0] - movePos[0]*5, meshPosition[1] - movePos[1]*5, meshPosition[2])
         # # move around
 
         #   print(msh.pos())
@@ -69,7 +71,8 @@ def loop_func(event):
         #   #cur[2] = 10*(handLMS.landmark[8].z * -1)
         #   msh.pos(cur[0], cur[1])
       else:
-        curPos = [None, None, None]
+        startingHandPos[isRightHand] = [None, None, None]
+        startingModelPos[isRightHand] = [None, None, None]
         #todo move around model for WAN
 
 
